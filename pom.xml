@@ -18,12 +18,22 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.matttproud.accepts</groupId>
-    <artifactId>Accepts</artifactId>
-    <version>0.0.1</version>
+    <artifactId>accepts</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
 
     <name>HTTP Accept Header Helpers</name>
     <url>http://github.com/matttproud/java_accepts</url>
+    <description>
+        HTTP request helpers for Accept header bodies to assist in
+        return content-type negotiation.
+    </description>
 
     <licenses>
         <license>
@@ -34,8 +44,18 @@
     </licenses>
 
     <scm>
-        <url>http://github.com/matttproud/java_accepts</url>
+        <connection>scm:git:git@github.com:matttproud/java_accepts.git</connection>
+        <developerConnection>scm:git:git@github.com:matttproud/java_accepts.git</developerConnection>
+        <url>git@github.com:matttproud/java_accepts.git</url>
     </scm>
+
+    <developers>
+        <developer>
+            <id>mtp</id>
+            <name>Matt T. Proud</name>
+            <email>matt.proud@gmail.com</email>
+        </developer>
+    </developers>
 
     <!-- Maven has a tendency to produce cargo cult behaviors.
          We should validate what is strictly necessary. -->
@@ -112,4 +132,33 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <profiles>
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.4</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
