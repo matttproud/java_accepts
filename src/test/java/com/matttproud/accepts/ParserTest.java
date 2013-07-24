@@ -1,12 +1,11 @@
 package com.matttproud.accepts;
 
-import java.util.List;
-
 import junit.framework.Assert;
-
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -14,6 +13,8 @@ import com.google.common.collect.ImmutableMap;
  * </p>
  */
 public class ParserTest {
+  private static final Map<String, String> noParameters = new HashMap<String, String>();
+
   @Test
   public void TestChrome() {
     final String header =
@@ -21,18 +22,12 @@ public class ParserTest {
     final List<Accept> out = Parser.parse(header);
 
     Assert.assertEquals(6, out.size());
-    Assert.assertEquals(new Accept("application", "xml", 1.0f, ImmutableMap.<String, String> of()),
-        out.get(0));
-    Assert.assertEquals(
-        new Accept("application", "xhtml+xml", 1.0f, ImmutableMap.<String, String> of()),
-        out.get(1));
-    Assert.assertEquals(new Accept("image", "png", 1.0f, ImmutableMap.<String, String> of()),
-        out.get(2));
-    Assert.assertEquals(new Accept("text", "html", 0.9f, ImmutableMap.<String, String> of()),
-        out.get(3));
-    Assert.assertEquals(new Accept("text", "plain", 0.8f, ImmutableMap.<String, String> of()),
-        out.get(4));
-    Assert.assertEquals(new Accept("*", "*", 0.5f, ImmutableMap.<String, String> of()), out.get(5));
+    Assert.assertEquals(new Accept("application", "xml", 1.0f, noParameters), out.get(0));
+    Assert.assertEquals(new Accept("application", "xhtml+xml", 1.0f, noParameters), out.get(1));
+    Assert.assertEquals(new Accept("image", "png", 1.0f, noParameters), out.get(2));
+    Assert.assertEquals(new Accept("text", "html", 0.9f, noParameters), out.get(3));
+    Assert.assertEquals(new Accept("text", "plain", 0.8f, noParameters), out.get(4));
+    Assert.assertEquals(new Accept("*", "*", 0.5f, noParameters), out.get(5));
   }
 
   @Test
@@ -42,17 +37,11 @@ public class ParserTest {
     final List<Accept> out = Parser.parse(header);
 
     Assert.assertEquals(6, out.size());
-    Assert.assertEquals(new Accept("application", "xml", 1.0f, ImmutableMap.<String, String> of()),
-        out.get(0));
-    Assert.assertEquals(
-        new Accept("application", "xhtml+xml", 1.0f, ImmutableMap.<String, String> of()),
-        out.get(1));
-    Assert.assertEquals(new Accept("image", "png", 1.0f, ImmutableMap.<String, String> of()),
-        out.get(2));
-    Assert.assertEquals(new Accept("text", "html", 0.9f, ImmutableMap.<String, String> of()),
-        out.get(3));
-    Assert.assertEquals(new Accept("text", "plain", 0.8f, ImmutableMap.<String, String> of()),
-        out.get(4));
-    Assert.assertEquals(new Accept("*", "*", 0.5f, ImmutableMap.<String, String> of()), out.get(5));
+    Assert.assertEquals(new Accept("application", "xml", 1.0f, noParameters), out.get(0));
+    Assert.assertEquals(new Accept("application", "xhtml+xml", 1.0f, noParameters), out.get(1));
+    Assert.assertEquals(new Accept("image", "png", 1.0f, noParameters), out.get(2));
+    Assert.assertEquals(new Accept("text", "html", 0.9f, noParameters), out.get(3));
+    Assert.assertEquals(new Accept("text", "plain", 0.8f, noParameters), out.get(4));
+    Assert.assertEquals(new Accept("*", "*", 0.5f, noParameters), out.get(5));
   }
 }

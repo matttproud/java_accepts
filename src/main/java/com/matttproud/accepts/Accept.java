@@ -15,7 +15,8 @@ package com.matttproud.accepts;
 
 import net.jcip.annotations.ThreadSafe;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * <p>
@@ -43,7 +44,7 @@ public final class Accept implements Comparable<Accept> {
   private final String type;
   private final String subtype;
   private final float q;
-  private final ImmutableMap<String, String> params;
+  private final Map<String, String> params;
 
   /**
    * <p>
@@ -55,11 +56,11 @@ public final class Accept implements Comparable<Accept> {
    * </p>
    */
   public Accept(final String type, final String subtype, final float q,
-      final ImmutableMap<String, String> params) {
+      final Map<String, String> params) {
     this.type = type;
     this.subtype = subtype;
     this.q = q;
-    this.params = params;
+    this.params = Collections.unmodifiableMap(params);
   }
 
   /**
@@ -107,7 +108,7 @@ public final class Accept implements Comparable<Accept> {
 
   /**
    * <p>
-   * Emit the parameters parameter for the request.
+   * Emit the parameters for the request.
    * </p>
    * 
    * <p>
@@ -116,11 +117,16 @@ public final class Accept implements Comparable<Accept> {
    * </p>
    * 
    * <p>
+   * <em>Note:</em> This returns an immutable copy of the underlying parameter
+   * data.
+   * </p>
+   *
+   * <p>
    * For {@code Accept: application/json;q=1.0;schema=Object;version=0.0.1},
    * this maps to {@code schema=Object, version=0.0.1} .
    * </p>
    */
-  public ImmutableMap<String, String> getParams() {
+  public Map<String, String> getParams() {
     return params;
   }
 

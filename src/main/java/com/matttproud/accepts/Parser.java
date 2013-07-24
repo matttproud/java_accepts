@@ -13,15 +13,10 @@
  */
 package com.matttproud.accepts;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import net.jcip.annotations.ThreadSafe;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -54,18 +49,24 @@ public class Parser {
   private static final String Q_PARAMETER = "q";
   private static final String PARAMETER_ASSIGNMENT = "=";
 
+  private static final List<Accept> emptyAccepts = Collections
+      .unmodifiableList(new ArrayList<Accept>());
+  private static final Map<String, String> emptyParams = new HashMap<String, String>();
+
+
   /**
    * <p>
    * Generate {@link Accept} entities from a {@link HttpServletRequest}.
    * </p>
    * 
    * @param r The request.
-   * @return A group of {@link Accept} entities.
+   * @return An immutable list of {@link Accept} entities sorted by RFC
+   *         priority.
    * @throws IllegalArgumentException if an illegal header value is provided.
+   * @see #parse(String)
    */
-  public static ImmutableList<Accept> parse(final HttpServletRequest r)
-      throws IllegalArgumentException {
-    return parse(Strings.nullToEmpty(r.getHeader("Accept")));
+  public static List<Accept> parse(final HttpServletRequest r) throws IllegalArgumentException {
+    return parse(r.getHeader("Accept"));
   }
 
   /**
@@ -75,13 +76,18 @@ public class Parser {
    * </p>
    * 
    * @param headerValue The header value.
-   * @return A group of {@link Accept} entities.
+   * @return An immutable list of {@link Accept} entities sorted by RFC
+   *         priority.
    * @throws IllegalArgumentException if an illegal header value is provided.
    */
-  public static ImmutableList<Accept> parse(final String headerValue)
-      throws IllegalArgumentException {
+  public static List<Accept> parse(final String headerValue) throws IllegalArgumentException {
+    final String sanitizedValue = headerValue.trim();
+    if (sanitizedValue.length() == 0) {
+      return emptyAccepts;
+    }
+
     try {
-      final String[] specs = headerValue.split(SPEC_DELIMITER);
+      final String[] specs = sanitizedValue.split(SPEC_DELIMITER);
       final List<Accept> accumulator = new ArrayList<Accept>(specs.length);
 
       for (String spec : specs) {
@@ -105,11 +111,11 @@ public class Parser {
         }
 
         if (specComponents.length == 1) {
-          accumulator.add(new Accept(type, subtype, q, ImmutableMap.<String, String> of()));
+          accumulator.add(new Accept(type, subtype, q, emptyParams));
           continue;
         }
 
-        final ImmutableMap.Builder<String, String> params = ImmutableMap.builder();
+        final HashMap<String, String> intermediateParams = new HashMap<String, String>();
         for (int i = 1; i < specComponents.length; i++) {
           final String[] elements = specComponents[i].split(PARAMETER_ASSIGNMENT);
           if (elements.length != 2) {
@@ -122,14 +128,14 @@ public class Parser {
             continue;
           }
 
-          params.put(name, value);
+          intermediateParams.put(name, value);
         }
 
-        accumulator.add(new Accept(type, subtype, q, params.build()));
+        accumulator.add(new Accept(type, subtype, q, intermediateParams));
       }
       Collections.sort(accumulator);
 
-      return ImmutableList.copyOf(accumulator);
+      return Collections.unmodifiableList(accumulator);
     } catch (final RuntimeException e) {
       throw new IllegalArgumentException(e);
     }
